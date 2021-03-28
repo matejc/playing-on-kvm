@@ -38,10 +38,10 @@ qemu-kvm \
     -drive if=pflash,format=raw,readonly,file=ovmf-x64/OVMF_CODE-pure-efi.fd \
     -drive if=pflash,format=raw,file=ovmf-x64/OVMF_VARS-pure-efi.fd \
     -usb \
-    -device usb-host,vendorid=0x05e3,productid=0x0610 \
-    -device usb-host,vendorid=0x1d50,productid=0x6122 \
-    -device usb-host,vendorid=0x214e,productid=0x0005 \
-    -device usb-host,vendorid=0x041e,productid=0x30d3 \
+    -device usb-host,vendorid=0x05e3,productid=0x0610 \  # usb hub
+    -device usb-host,vendorid=0x1d50,productid=0x6122 \  # keyboard
+    -device usb-host,vendorid=0x214e,productid=0x0005 \  # mouse
+    -device usb-host,vendorid=0x041e,productid=0x30d3 \  # usb sound card
     -netdev bridge,id=vmnic,br=br0 \
     -device virtio-net-pci,netdev=vmnic,mac=$macaddress \
     -monitor stdio \
