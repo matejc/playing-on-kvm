@@ -1,0 +1,170 @@
+<domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+  <name>win10</name>
+  <metadata>
+    <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
+      <libosinfo:os id="http://microsoft.com/win/10"/>
+    </libosinfo:libosinfo>
+  </metadata>
+  <memory unit='GB'>20</memory>
+  <currentMemory unit='GB'>20</currentMemory>
+  <memoryBacking>
+    <hugepages/>
+  </memoryBacking>
+  <vcpu>12</vcpu>
+  <!-- <vcpu placement='static'>12</vcpu>
+  <iothreads>1</iothreads>
+  <cputune>
+    <vcpupin vcpu='0' cpuset='0'/>
+    <vcpupin vcpu='1' cpuset='6'/>
+    <vcpupin vcpu='2' cpuset='1'/>
+    <vcpupin vcpu='3' cpuset='7'/>
+    <vcpupin vcpu='4' cpuset='2'/>
+    <vcpupin vcpu='5' cpuset='8'/>
+    <vcpupin vcpu='6' cpuset='3'/>
+    <vcpupin vcpu='7' cpuset='9'/>
+    <vcpupin vcpu='8' cpuset='4'/>
+    <vcpupin vcpu='9' cpuset='10'/>
+    <vcpupin vcpu='10' cpuset='5'/>
+    <vcpupin vcpu='11' cpuset='11'/>
+    <emulatorpin cpuset='5'/>
+    <iothreadpin iothread='1' cpuset='11'/>
+    <vcpusched vcpus='0' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='1' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='2' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='3' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='4' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='5' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='6' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='7' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='8' scheduler='fifo' priority='1'/>
+    <vcpusched vcpus='9' scheduler='fifo' priority='1'/>
+    <iothreadsched iothreads='1' scheduler='fifo' priority='99'/>
+  </cputune> -->
+  <os>
+    <type arch='x86_64' machine='q35'>hvm</type>
+    <loader readonly='yes' type='pflash'>/var/lib/libvirt/ovmf-x64/OVMF_CODE-pure-efi.fd</loader>
+    <nvram>/var/lib/libvirt/ovmf-x64/OVMF_VARS-pure-efi.fd</nvram>
+    <bootmenu enable='no'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <hyperv>
+      <relaxed state='on'/>
+      <vapic state='on'/>
+      <spinlocks state='on' retries='8191'/>
+    </hyperv>
+    <vmport state='off'/>
+    <kvm>
+      <hidden state='on'/>
+    </kvm>
+    <pmu state='off'/>
+  </features>
+  <cpu mode='host-passthrough'>
+    <topology sockets='1' cores='6' threads='2'/>
+    <cache mode='passthrough'/>
+    <feature policy='require' name='invtsc'/>
+    <feature policy='require' name='svm'/>
+    <feature policy='require' name='hypervisor'/>
+    <feature policy='require' name='apic'/>
+    <feature policy='require' name='topoext'/>
+  </cpu>
+  <clock offset='localtime'>
+    <timer name='rtc' present='no' tickpolicy='catchup'/>
+    <timer name='pit' present='no' tickpolicy='delay'/>
+    <timer name='hpet' present='no'/>
+    <timer name='kvmclock' present='no'/>
+    <timer name='hypervclock' present='yes'/>
+    <timer name='tsc' present='yes' mode='native'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <qemu:commandline>
+    <qemu:arg value="-set"/>
+    <qemu:arg value="device.hostdev0.x-vga=on"/>
+    <qemu:env name='QEMU_AUDIO_DRV' value='alsa'/>
+    <qemu:env name='QEMU_AUDIO_TIMER_PERIOD' value='0'/>
+    <qemu:env name='QEMU_PA_SAMPLES' value='128'/>
+  </qemu:commandline>
+  <devices>
+    <emulator>/run/libvirt/nix-emulators/qemu-kvm</emulator>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+      <source dev='/dev/sda'/>
+      <target dev='sda' bus='sata'/>
+      <boot order='1'/>
+    </disk>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+      <source dev='/dev/sdb'/>
+      <target dev='sdb' bus='sata'/>
+    </disk>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='/var/lib/libvirt/images/windows.iso'/>
+      <target dev='sdc' bus='sata'/>
+      <readonly/>
+    </disk>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='/var/lib/libvirt/images/virtio-win-0.1.196.iso'/>
+      <target dev='sdd' bus='sata'/>
+      <readonly/>
+    </disk>
+    <controller type='pci' index='0' model='pcie-root'/>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <driver name='vfio'/>
+      <source>
+        <address domain='0x0000' bus='0x01' slot='0x00' function='0x0' multifunction='on'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <driver name='vfio'/>
+      <source>
+        <address domain='0x0000' bus='0x01' slot='0x00' function='0x1'/>
+      </source>
+    </hostdev>
+    <hostdev mode="subsystem" type="usb" managed="yes">
+      <source>
+        <vendor id="0x046d"/>
+        <product id="0xc330"/>
+      </source>
+    </hostdev>
+    <hostdev mode="subsystem" type="usb" managed="yes">
+      <source>
+        <vendor id="0x214e"/>
+        <product id="0x0005"/>
+      </source>
+    </hostdev>
+    <hostdev mode="subsystem" type="usb" managed="yes">
+      <source>
+        <vendor id="0x041e"/>
+        <product id="0x30d3"/>
+      </source>
+    </hostdev>
+    <hostdev mode="subsystem" type="usb" managed="yes">
+      <source>
+        <vendor id="0x046d"/>
+        <product id="0xc21f"/>
+      </source>
+    </hostdev>
+    <controller type="usb" model="qemu-xhci" ports="15"/>
+    <interface type="bridge">
+      <source bridge="br0"/>
+      <mac address="DE:AD:BE:EF:49:09"/>
+      <model type="virtio-net-pci"/>
+    </interface>
+    <sound model="ac97"/>
+    <video>
+      <model type='qxl' primary='no'/>
+    </video>
+    <graphics type="spice" port="3001" autoport="no" listen="127.0.0.1" keymap="en-us">
+      <listen type="address" address="127.0.0.1"/>
+    </graphics>
+  </devices>
+</domain>

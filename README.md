@@ -28,7 +28,7 @@ For other Linux distributions you can extract meaningful info from the upper sni
 
 ## Requirements
 
-- Download `edk2.git-ovmf-x64*` from https://www.kraxel.org/repos/jenkins/edk2/
+- Download `edk2.git-ovmf-x64-*` from https://www.kraxel.org/repos/jenkins/edk2/
 - Download virtio-win ISO from https://github.com/virtio-win/virtio-win-pkg-scripts/blob/master/README.md
 - Download Windows ISO from https://www.microsoft.com/en-gb/software-download/windows10ISO
 
