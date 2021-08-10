@@ -87,9 +87,6 @@
   <qemu:commandline>
     <qemu:arg value="-set"/>
     <qemu:arg value="device.hostdev0.x-vga=on"/>
-    <qemu:env name='QEMU_AUDIO_DRV' value='alsa'/>
-    <qemu:env name='QEMU_AUDIO_TIMER_PERIOD' value='0'/>
-    <qemu:env name='QEMU_PA_SAMPLES' value='128'/>
   </qemu:commandline>
   <devices>
     <emulator>/run/libvirt/nix-emulators/qemu-kvm</emulator>
@@ -129,37 +126,63 @@
         <address domain='0x0000' bus='0x01' slot='0x00' function='0x1'/>
       </source>
     </hostdev>
+
+    <!--keyboard-->
     <hostdev mode="subsystem" type="usb" managed="yes">
       <source>
         <vendor id="0x046d"/>
         <product id="0xc330"/>
       </source>
     </hostdev>
+
+    <!--mouse-->
     <hostdev mode="subsystem" type="usb" managed="yes">
       <source>
         <vendor id="0x214e"/>
         <product id="0x0005"/>
       </source>
     </hostdev>
+
+    <!--sound card-->
     <hostdev mode="subsystem" type="usb" managed="yes">
       <source>
         <vendor id="0x041e"/>
         <product id="0x30d3"/>
       </source>
     </hostdev>
+
+    <!--gamepad-->
+    <!--<hostdev mode="subsystem" type="usb" managed="yes">-->
+    <!--  <source>-->
+    <!--    <vendor id="0x046d"/>-->
+    <!--    <product id="0xc21f"/>-->
+    <!--  </source>-->
+    <!--</hostdev>-->
+
+    <!--webcam-->
     <hostdev mode="subsystem" type="usb" managed="yes">
       <source>
         <vendor id="0x046d"/>
-        <product id="0xc21f"/>
+        <product id="0x0826"/>
       </source>
     </hostdev>
+
     <controller type="usb" model="qemu-xhci" ports="15"/>
     <interface type="bridge">
       <source bridge="br0"/>
       <mac address="DE:AD:BE:EF:49:09"/>
       <model type="virtio-net-pci"/>
     </interface>
-    <sound model="ac97"/>
+
+    <sound model='ich9'>
+      <codec type='micro'/>
+      <audio id='1'/>
+    </sound>
+    <audio id="1" type="pulseaudio" serverName="/run/user/1000/pulse/native">
+      <input latency="20000" mixingEngine="no"/>
+      <output latency="20000" mixingEngine="no"/>
+    </audio>
+
     <video>
       <model type='qxl' primary='no'/>
     </video>
